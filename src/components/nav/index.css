@@ -1,0 +1,11 @@
+.navigation-inner {
+  background: #fff;
+  color: #a08ca8;
+  position: fixed;
+  width: 100%;
+  z-index: 10;
+}
+
+.toggle-side-bar {
+  align-self: center;
+}
