@@ -40,7 +40,7 @@ function BookingRequests(props) {
       <Box>
         <SearchArea />
       </Box>
-      <BookServiceTable {...bookingsRequest } />
+      <BookServiceTable bookingsRequest={bookingsRequest}/>
     </Box>
   );
 }

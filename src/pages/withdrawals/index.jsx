@@ -1,12 +1,26 @@
-import { Text, Heading, Flex, Box, Tabs, TabPanels, TabPanel, Select, Table } from "@chakra-ui/react";
+import {  Heading, Box } from "@chakra-ui/react";
 import "../../components/nav/index.css";
 import SearchArea from "./components/searchArea";
 import WithdrawalTable from "./components/WithdrawalTable";
 import { withdrawalData } from "./components/withdrawalData";
+import { getWithdrawal } from "./service";
+import { useEffect, useState } from "react";
 
 
 function Withdrawals(props) {
-  const { SideBarActive, showSidebar, toggle } = props;
+ 	// const [currentTab, setCurrentTab] = useState("")
+	// const userId = useSelector(state => state.auth?.adminId)
+	// const userType = useSelector(state => state.auth?.userType)
+	const [withdrawal, setWithdrawal] = useState([])
+	const [loading, setLoading] = useState(false)
+	// const [updateTable, setUpdateTable] = useState({})
+
+
+	useEffect(() => {
+		getWithdrawal(setLoading,(data) => setWithdrawal(data))
+  }, [])
+  
+  console.log({ withdrawal })
 
   return (
     <>

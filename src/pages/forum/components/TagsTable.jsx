@@ -21,22 +21,21 @@ import CautionAlertDialog from "../../../components/common/CautionAlertDialog"
 import { deleteTags, editTag, getSingleTag } from "../service"
 import { Tip } from "./../../../components/Tip"
 import { CustomButton } from "../../../components/CustomButton"
+import { errorNotifier } from "../../../components/NotificationHandler"
 
 
 const TagsTable = ({ tags, updateTable, userType, userId }) => {
 	const { isOpen, onOpen, onClose } = useDisclosure()
 	const [disabled, setDisabled] = useState(true)
 	const [loading, setLoading] = useState(false)
-		const [singleTag, setSingleTag] = useState([])
+		const [currentData, setCurrentData] = useState([])
 
 
-	useEffect((_id) => {
-		getSingleTag(userId, _id, setLoading, setSingleTag)
-	}, [])
-	
-console.log(singleTag, "fhs")
+	const openModal = (tag) => {
+		setCurrentData({ ...tag })
+		onOpen()
 
-	// const userId = useSelector(state => state.auth?.user)
+	}
 	const [formValues, setFormValues] = useState({
 		tagName: "",
 	})
@@ -57,20 +56,64 @@ console.log(singleTag, "fhs")
 	}
 
 	const handleSaveSett = async _id => {
-		console.log("_id", _id)
-		// editTag(_id, formValues)
-		// 	.then(() => {
-		// 		updateTable()
-		// 		onClose()
-		// 		// window.location.pathname = "/account"
-		// 	})
-		// 	.catch(e => errorNotifier(e.response?.message))
+		editTag(_id, formValues)
+			.then(() => {
+				updateTable()
+				onClose()
+			})
+			.catch(e => errorNotifier(e.response?.message))
 	}
 	const handleDelete = _id => {
 		deleteTags(_id, userType, onClose).then(() => updateTable())
 	}
 	return (
 		<>
+			<Modal isOpen={isOpen} onClose={onClose}>
+				<ModalOverlay />
+				<ModalContent bg="#F8F8F8">
+					<ModalHeader>
+						<Text fontWeight="bold" textAlign="center">
+							Edit Create Tag
+						</Text>
+					</ModalHeader>
+					<ModalBody>
+						<Stack
+							flex="3"
+							padding="10px 20px"
+							maxW={["100%", "700px"]}
+							mr={[0, "20px"]}
+							mb={["20px", 5]}
+							py={5}
+							mx={5}
+							cursor="pointer"
+						>
+							<FormControl>
+								<FormLabel htmlFor="tagTitle" fontSize="sm" color="#25282B">
+									Enter Tag Title
+								</FormLabel>
+								<Input
+									name="tagName"
+									type="text"
+									_focus={{ boxShadow: "none" }}
+									variant="filled"
+									mb={5}
+									onChange={handleChange}
+									value={formValues?.tagName}
+									defaultValue={currentData?.tagName}
+								/>
+							</FormControl>
+							<CustomButton
+								btnText="Submit"
+								width="50%"
+								alignSelf="center"
+								disabled={disabled}
+								onClick={() => handleSaveSett(currentData._id)}
+								isLoading={loading}
+							/>
+						</Stack>
+					</ModalBody>
+				</ModalContent>
+			</Modal>
 			{tags?.map?.((data, i) => {
 				return (
 					<>
@@ -82,63 +125,12 @@ console.log(singleTag, "fhs")
 							px="24px"
 							borderRadius="5"
 							mb="5"
-							key={i}
+							key={data._Id}
 						>
 							<Text as="h3">{data.tagName}</Text>
 							<HStack gap="4">
 								<Tip l={"Edit"}>
-									<Modal isOpen={isOpen} onClose={onClose}>
-										<ModalOverlay />
-										<ModalContent bg="#F8F8F8">
-											<ModalHeader>
-												<Text fontWeight="bold" textAlign="center">
-													Edit Create Tag
-												</Text>
-											</ModalHeader>
-											{/* <ModalCloseButton /> */}
-											<ModalBody>
-												<Stack
-													flex="3"
-													padding="10px 20px"
-													maxW={["100%", "700px"]}
-													mr={[0, "20px"]}
-													mb={["20px", 5]}
-													py={5}
-													mx={5}
-													cursor="pointer"
-												>
-													<FormControl>
-														<FormLabel
-															htmlFor="tagTitle"
-															fontSize="sm"
-															color="#25282B"
-														>
-															Enter Tag Title
-														</FormLabel>
-														<Input
-															name="tagName"
-															type="text"
-															_focus={{ boxShadow: "none" }}
-															variant="filled"
-															mb={5}
-															onChange={handleChange}
-															value={formValues?.tagName}
-															placeholder={data?.tagName}
-														/>
-													</FormControl>
-													<CustomButton
-														btnText="Submit"
-														width="50%"
-														alignSelf="center"
-														disabled={disabled}
-														onClick={() => handleSaveSett(data._id)}
-														// isLoading={loading}
-													/>
-												</Stack>
-											</ModalBody>
-										</ModalContent>
-									</Modal>
-									<Circle p="6px" bg="rgba(25, 165, 176, 0.2)" onClick={onOpen}>
+									<Circle p="6px" bg="rgba(25, 165, 176, 0.2)" onClick={() => openModal(data)}>
 										<FiEdit2 color="rgba(25, 165, 176, 0.8)" />
 									</Circle>
 								</Tip>

@@ -13,4 +13,5 @@ export const AUTH_ROUTES = {
 	EDIT_TAG: _id => `/admin/tags/${_id}`,
 	GET_REPORTED_POSTS: userType => `/admin/posts?userType=${userType}`,
 	GET_BOOKINGS_REQUEST: userType => `/admin/bookings?userType=${userType}`,
+	GET_WITHDRAWAL: "/payment/withdrawal-request/623c7f8a8299527fce186db7"
 }
